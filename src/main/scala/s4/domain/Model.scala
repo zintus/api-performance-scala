@@ -18,21 +18,35 @@ class Model(name: String, dal: DAL, db: Database) {
   // Put an implicitSession in scope for database actions
   implicit val implicitSession = db.createSession
 
+  def seed() {
+    posts ++= (0L until 100L).map(n => Post(Option.empty, "Lorem ipsum dir solor amet", System.currentTimeMillis(), n))
+  }
+
   def createDB = dal.create
 
   def dropDB = dal.drop
   
   def purgeDB = dal.purge
 
-   def getPersons(): List[Person] = {
-    val result = findAllPersons
-    println("Got persons: " + result)
-    result
+  def getPosts(implicit  user:User): List[Post] = {
+    posts.take(5).list
   }
 
-  def addPerson(person: Person): Person = {
-    val result = insert(person)
-    println("Inserted person: " + result)
-    result
+  def postById(id: Long): Option[Post] = {
+    (for {
+      p <- posts if p.id === id
+    } yield p).list.headOption
   }
+
+//   def getPersons(): List[Person] = {
+//    val result = findAllPersons
+//    println("Got persons: " + result)
+//    result
+//  }
+//
+//  def addPerson(person: Person): Person = {
+//    val result = insert(person)
+//    println("Inserted person: " + result)
+//    result
+//  }
 }

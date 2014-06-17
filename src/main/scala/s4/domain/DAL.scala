@@ -1,12 +1,13 @@
 package s4.domain
 
+import java.util.Date
+
 import scala.slick.driver.JdbcProfile
 import scala.slick.backend.DatabaseComponent
 import scala.slick.driver.H2Driver
 import scala.slick.driver.SQLiteDriver
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-//import s4.domain.PersonComponent.Persons
 
 import scala.slick.driver.JdbcProfile
 import scala.slick.driver.H2Driver
@@ -20,17 +21,19 @@ trait Profile {
 // It is an adaptation of the official Slick example set:
 // https://github.com/slick/slick-examples (MultiDBCakeExample.scala)
 // Understanding that example will help to understand this code.
-class DAL(override val profile: JdbcProfile) extends PersonComponent with Profile {
+class DAL(override val profile: JdbcProfile) extends PostsComponent with Profile {
   import profile.simple._
 
   val logger: Logger = LoggerFactory.getLogger("s4.domain");
   logger.info("Model class instantiated")
 
-  //def ddl = (PersonComponent.Persons)
+//  def ddl = (posts, likes, users)
 
   def create(implicit session: Session): Unit = {
     try {
-      persons.ddl.create
+      posts.ddl.create
+      users.ddl.create
+      likes.ddl.create
     } catch {
       case e: Exception => logger.info("Could not create database.... assuming it already exists")
     }
@@ -38,7 +41,9 @@ class DAL(override val profile: JdbcProfile) extends PersonComponent with Profil
 
   def drop(implicit session: Session): Unit = {
     try {
-      persons.ddl.drop
+      posts.ddl.drop
+      users.ddl.drop
+      likes.ddl.drop
     } catch {
       case e: Exception => logger.info("Could not drop database")
     }
